@@ -121,7 +121,7 @@ const Navbar = () => {
       transition={{ duration: 0.8, ease: "easeOut" }}
       className={`fixed top-0 z-50 w-full  flex justify-between items-center px-4 sm:px-20 xl:px-32 transition-all duration-300 ${
         scrolled
-          ? "py-4 bg-white backdrop-blur-lg shadow-md"
+          ? "py-4  bg-white/80 backdrop-blur-lg shadow-md"
           : "py-4 sm:py-6 bg-transparent"
       }`}
     >
