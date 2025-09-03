@@ -46,9 +46,11 @@
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
+   const navigate = useNavigate();
 
   const handleSubscribe = () => {
     if (!email) {
@@ -69,7 +71,8 @@ const Footer = () => {
       <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-500/30 pb-6">
         <div className="md:max-w-96">
           <img
-            className="w-34 -mt-12"
+           onClick={() => navigate("/")}
+            className="w-34 -mt-12 cursor-pointer"
             src={assets.mylogo}
             alt="dummyLogoDark"
           />
