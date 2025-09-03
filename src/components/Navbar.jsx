@@ -112,7 +112,7 @@ const Navbar = () => {
     initial={{ opacity: 0, y: -60 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 1, ease: "easeOut" }}
-    className="nav-wrapper fixed z-50 w-full backdrop-blur-2xl py-3  -mt-6 sm:-mt-15 "
+    className="nav-wrapper fixed z-50 w-full backdrop-blur-2xl py-3  -mt-8 sm:-mt-15 "
   >
     <motion.div
       ref={navRef}
