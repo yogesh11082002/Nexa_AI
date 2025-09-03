@@ -104,7 +104,7 @@ const Move = () => {
   };
 
   return (
-    <div className="-mt-35 sm:-mt-25">
+    <div className="-mt-35 sm:-mt-20">
       <div
         className="overflow-hidden w-full relative max-w-5xl mx-auto select-none"
         onMouseEnter={handleMouseEnter}

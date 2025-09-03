@@ -50,7 +50,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="px-4 sm:px-20 xl:px-32 relative inline-flex flex-col w-full justify-center bg-[url(/gradientBackground.png)] bg-cover bg-no-repeat min-h-screen -mt-3 sm:mt-6 ">
+    <div className="px-4 sm:px-20 xl:px-32 relative inline-flex flex-col w-full justify-center bg-[url(/gradientBackground.png)] bg-cover bg-no-repeat min-h-screen -mt-3 sm:mt-0 ">
       
       {/* Heading + Subtext */}
       <motion.div
@@ -97,7 +97,7 @@ const Hero = () => {
       {/* Trusted Badge with GSAP floating */}
       <motion.div
         ref={trustedRef}
-        className="flex items-center gap-4 mt-8 mx-auto text-gray-600"
+        className="flex items-center gap-4 mt-10 mx-auto text-gray-600"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.6 }}
