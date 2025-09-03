@@ -16,12 +16,15 @@ import RemoveBackground from "./pages/RemoveBackground";
 import RemoveObject from "./pages/RemoveObject";
 import ReviewResume from "./pages/ReviewResume";
 import Community from "./pages/Community";
+import Demo from "./pages/Demo";
 
 const App = () => {
   return (
     <Routes>
       {/* Public Route */}
       <Route path="/" element={<Home />} />
+      <Route path="/demo" element={<Demo />} />
+
 
       {/* Protected Routes */}
       <Route
