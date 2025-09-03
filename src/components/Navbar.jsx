@@ -150,7 +150,7 @@ const Navbar = () => {
       initial={{ opacity: 0, y: -40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`fixed top-0 z-50 w-full  flex justify-between items-center px-4 sm:px-20 xl:px-32 -mt-10 sm:-mt-15 transition-all duration-300 ${
+      className={`fixed top-0 z-50 w-full  flex justify-between items-center px-4 sm:px-20 xl:px-32 -mt-9 sm:-mt-15 transition-all duration-300 ${
         scrolled
           ? "py-4   bg-white/20 backdrop-blur-lg shadow-md "
           : "py-4 sm:py-6 bg-transparent"
