@@ -1,7 +1,20 @@
-// import React from "react";
+// import React, { useEffect, useRef } from "react";
+// import { motion } from "framer-motion";
+// import gsap from "gsap";
 
 // const Testimonial = () => {
+//   const cardsRef = useRef([]);
+
 //   const dummyTestimonialData = [
+//     {
+//       image:
+//         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&h=200&auto=format&fit=crop",
+//       name: "David Lee",
+//       title: "Content Writer, TechCorp",
+//       content:
+//         " NexaAI has transformed our content creation process. The AI tools have helped us produce high-quality content faster than ever before.",
+//       rating: 5,
+//     },
 //     {
 //       image:
 //         "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200",
@@ -20,35 +33,46 @@
 //         " NexaAI has made our content creation process effortless. The AI tools have helped us produce high-quality content faster than ever before.",
 //       rating: 5,
 //     },
-//     {
-//       image:
-//         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&h=200&auto=format&fit=crop",
-//       name: "David Lee",
-//       title: "Content Writer, TechCorp",
-//       content:
-//         " NexaAI has transformed our content creation process. The AI tools have helped us produce high-quality content faster than ever before.",
-//       rating: 4,
-//     },
+    
 //   ];
+
+//   useEffect(() => {
+//     // GSAP stagger animation for cards
+//     gsap.from(cardsRef.current, {
+//       y: 50,
+//       opacity: 0,
+//       duration: 0.8,
+//       ease: "power3.out",
+//       stagger: 0.2,
+//     });
+//   }, []);
 
 //   return (
 //     <div className="px-4 sm:px-20 xl:px-32 py-24">
 //       {/* Section Header */}
-//       <div className="text-center">
+//       <motion.div
+//         initial={{ opacity: 0, y: -40 }}
+//         animate={{ opacity: 1, y: 0 }}
+//         transition={{ duration: 0.8, ease: "easeOut" }}
+//         className="text-center"
+//       >
 //         <h2 className="text-slate-700 text-[42px] font-semibold">
 //           Loved by Creators
 //         </h2>
 //         <p className="text-gray-500 max-w-lg mx-auto">
 //           Don't just take our word for it. Here's what our users are saying.
 //         </p>
-//       </div>
+//       </motion.div>
 
 //       {/* Testimonials Grid */}
 //       <div className="flex flex-wrap mt-10 justify-center">
 //         {dummyTestimonialData.map((testimonial, index) => (
-//           <div
+//           <motion.div
 //             key={index}
-//             className="p-8 m-4 max-w-xs rounded-lg bg-[#FDFDFE] shadow-lg border border-gray-100 hover:-translate-y-1 transition duration-300 cursor-pointer"
+//             ref={(el) => (cardsRef.current[index] = el)}
+//             whileHover={{ scale: 1.05, rotate: 1 }}
+//             transition={{ type: "spring", stiffness: 200, damping: 15 }}
+//             className="p-8 m-4 max-w-xs rounded-lg bg-[#FDFDFE] shadow-lg border border-gray-100 cursor-pointer"
 //           >
 //             {/* Stars */}
 //             <div className="flex items-center gap-1">
@@ -70,7 +94,9 @@
 //             </div>
 
 //             {/* Content */}
-//             <p className="text-gray-500 text-sm my-5">"{testimonial.content}"</p>
+//             <p className="text-gray-500 text-sm my-5">
+//               "{testimonial.content}"
+//             </p>
 //             <hr className="mb-5 border-gray-300" />
 
 //             {/* Author */}
@@ -85,7 +111,7 @@
 //                 <p className="text-xs text-gray-500">{testimonial.title}</p>
 //               </div>
 //             </div>
-//           </div>
+//           </motion.div>
 //         ))}
 //       </div>
 //     </div>
@@ -94,14 +120,10 @@
 
 // export default Testimonial;
 
-"use client";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import gsap from "gsap";
 
 const Testimonial = () => {
-  const cardsRef = useRef([]);
-
   const dummyTestimonialData = [
     {
       image:
@@ -109,7 +131,7 @@ const Testimonial = () => {
       name: "David Lee",
       title: "Content Writer, TechCorp",
       content:
-        " NexaAI has transformed our content creation process. The AI tools have helped us produce high-quality content faster than ever before.",
+        "NexaAI has transformed our content creation process. The AI tools have helped us produce high-quality content faster than ever before.",
       rating: 5,
     },
     {
@@ -118,7 +140,7 @@ const Testimonial = () => {
       name: "John Doe",
       title: "Marketing Director, TechCorp",
       content:
-        " NexaAI has revolutionized our content workflow. The quality of the articles is outstanding, and it saves us hours of work every week.",
+        "NexaAI has revolutionized our content workflow. The quality of the articles is outstanding, and it saves us hours of work every week.",
       rating: 4,
     },
     {
@@ -127,30 +149,29 @@ const Testimonial = () => {
       name: "Jane Smith",
       title: "Content Creator, TechCorp",
       content:
-        " NexaAI has made our content creation process effortless. The AI tools have helped us produce high-quality content faster than ever before.",
+        "NexaAI has made our content creation process effortless. The AI tools have helped us produce high-quality content faster than ever before.",
       rating: 5,
     },
-    
   ];
 
-  useEffect(() => {
-    // GSAP stagger animation for cards
-    gsap.from(cardsRef.current, {
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      ease: "power3.out",
-      stagger: 0.2,
-    });
-  }, []);
+  // Animation variants for staggering
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.3, duration: 0.6, ease: "easeOut" },
+    }),
+  };
 
   return (
     <div className="px-4 sm:px-20 xl:px-32 py-24">
       {/* Section Header */}
       <motion.div
         initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
+        viewport={{ once: true }}
         className="text-center"
       >
         <h2 className="text-slate-700 text-[42px] font-semibold">
@@ -166,7 +187,11 @@ const Testimonial = () => {
         {dummyTestimonialData.map((testimonial, index) => (
           <motion.div
             key={index}
-            ref={(el) => (cardsRef.current[index] = el)}
+            custom={index}
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
             whileHover={{ scale: 1.05, rotate: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 15 }}
             className="p-8 m-4 max-w-xs rounded-lg bg-[#FDFDFE] shadow-lg border border-gray-100 cursor-pointer"
