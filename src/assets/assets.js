@@ -2,6 +2,8 @@ import logo from "./logo.svg";
 import gradientBackground from "./gradientBackground.png";
 import user_group from "./user_group.png";
 import star_icon from "./star_icon.svg";
+import logo_mine from "./logomine.png"
+import logo_web from "./weblogo.png"
 import star_dull_icon from "./star_dull_icon.svg";
 import profile_img_1 from "./profile_img_1.png";
 import arrow_icon from "./arrow_icon.svg";
@@ -16,6 +18,8 @@ export const assets = {
     gradientBackground,
     user_group,
     star_icon,
+    logo_web,
+    logo_mine,
     mylogo,
     star_dull_icon,
     profile_img_1,
