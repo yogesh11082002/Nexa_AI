@@ -130,7 +130,7 @@ const Navbar = () => {
         onClick={() => navigate("/")}
         src={assets.mylogo}
         alt="logo"
-        className="w-28 sm:w-40 cursor-pointer"
+        className="w-38 sm:w-40 cursor-pointer"
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 200 }}
       />
