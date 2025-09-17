@@ -238,8 +238,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import { getToken } from "@clerk/clerk-react";
-
+import { useAuth } from "@clerk/clerk-react";  // ✅ useAuth instead of direct getToken
 
 const styles = [
   "Realistic",
@@ -252,56 +251,51 @@ const styles = [
 ];
 
 const GenerateImages = () => {
+  const { getToken } = useAuth();   // ✅ Hook
   const [description, setDescription] = useState("");
   const [selectedStyle, setSelectedStyle] = useState("Realistic");
   const [isPublic, setIsPublic] = useState(false);
   const [generatedImage, setGeneratedImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
- 
   // Generate Image (API call to backend)
-const handleGenerateImage = async (e) => {
-  e.preventDefault();
-  if (!description) {
-    alert("Please enter a description!");
-    return;
-  }
-
-  setLoading(true);
-  setGeneratedImage(null);
-
-  try {
-    // ✅ Clerk token for auth
-    const token = await getToken();
-
-    // ✅ Your backend URL
-    const API_URL = import.meta.env.VITE_API_URL;
-
-    // ✅ POST request to backend
-    const res = await axios.post(
-      `${API_URL}/api/ai/generate-image`,
-      {
-        topic: `${description} in ${selectedStyle}`, // backend expects "topic"
-        publish: isPublic,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (res.data.success) {
-      setGeneratedImage(res.data.image); // backend should return { success, image }
-    } else {
-      alert(res.data.error || "Failed to generate image");
+  const handleGenerateImage = async (e) => {
+    e.preventDefault();
+    if (!description) {
+      alert("Please enter a description!");
+      return;
     }
-  } catch (err) {
-    console.error("Image generation failed:", err);
-    alert("Something went wrong. Check console for details.");
-  }
 
-  setLoading(false);
-};
+    setLoading(true);
+    setGeneratedImage(null);
 
+    try {
+      const token = await getToken();
+      const API_URL = import.meta.env.VITE_API_URL;
+
+      const res = await axios.post(
+        `${API_URL}/api/ai/generate-image`,
+        {
+          topic: `${description} in ${selectedStyle}`,
+          publish: isPublic,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.data.success) {
+        setGeneratedImage(res.data.image);
+      } else {
+        alert(res.data.error || "Failed to generate image");
+      }
+    } catch (err) {
+      console.error("Image generation failed:", err.response?.data || err.message);
+      alert("Something went wrong. Check console for details.");
+    }
+
+    setLoading(false);
+  };
 
   // Download Image
   const handleDownload = async () => {
@@ -334,12 +328,9 @@ const handleGenerateImage = async (e) => {
           onSubmit={handleGenerateImage}
           className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200"
         >
-          {/* Heading */}
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold text-[#00AD25]">
-              AI Image Generator
-            </h1>
-          </div>
+          <h1 className="text-xl font-semibold text-[#00AD25]">
+            AI Image Generator
+          </h1>
 
           {/* Description */}
           <p className="mt-6 text-sm font-medium">Describe Your Image</p>
@@ -384,7 +375,6 @@ const handleGenerateImage = async (e) => {
             <p className="text-sm">Make this image Public</p>
           </div>
 
-          {/* Generate button */}
           <button
             type="submit"
             disabled={loading}
