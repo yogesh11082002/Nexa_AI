@@ -257,34 +257,78 @@ const GenerateImages = () => {
   const [loading, setLoading] = useState(false);
 
   // Generate Image (API call to backend)
-  const handleGenerateImage = async (e) => {
-    e.preventDefault();
-    if (!description) {
-      alert("Please enter a description!");
-      return;
-    }
+  // const handleGenerateImage = async (e) => {
+  //   e.preventDefault();
+  //   if (!description) {
+  //     alert("Please enter a description!");
+  //     return;
+  //   }
 
-    try {
-      setLoading(true);
-      setGeneratedImage(null);
+  //   try {
+  //     setLoading(true);
+  //     setGeneratedImage(null);
 
-      const { data } = await axios.post("/api/ai/generate-image", {
-        topic: `${description} in ${selectedStyle}`, // 👈 backend uses `topic`
+  //     const { data } = await axios.post("/api/ai/generate-image", {
+  //       topic: `${description} in ${selectedStyle}`, // 👈 backend uses `topic`
+  //       publish: isPublic,
+  //     });
+
+  //     if (data.success) {
+  //       setGeneratedImage(data.image); // backend returns `image`
+  //     } else {
+  //       alert(data.error || "Failed to generate image");
+  //     }
+  //   } catch (err) {
+  //     console.error("Image generation failed:", err);
+  //     alert("Something went wrong while generating the image.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Generate Image (API call to backend)
+const handleGenerateImage = async (e) => {
+  e.preventDefault();
+  if (!description) {
+    alert("Please enter a description!");
+    return;
+  }
+
+  setLoading(true);
+  setGeneratedImage(null);
+
+  try {
+    // ✅ Clerk token for auth
+    const token = await getToken();
+
+    // ✅ Your backend URL
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    // ✅ POST request to backend
+    const res = await axios.post(
+      `${API_URL}/api/ai/generate-image`,
+      {
+        topic: `${description} in ${selectedStyle}`, // backend expects "topic"
         publish: isPublic,
-      });
-
-      if (data.success) {
-        setGeneratedImage(data.image); // backend returns `image`
-      } else {
-        alert(data.error || "Failed to generate image");
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
       }
-    } catch (err) {
-      console.error("Image generation failed:", err);
-      alert("Something went wrong while generating the image.");
-    } finally {
-      setLoading(false);
+    );
+
+    if (res.data.success) {
+      setGeneratedImage(res.data.image); // backend should return { success, image }
+    } else {
+      alert(res.data.error || "Failed to generate image");
     }
-  };
+  } catch (err) {
+    console.error("Image generation failed:", err);
+    alert("Something went wrong. Check console for details.");
+  }
+
+  setLoading(false);
+};
+
 
   // Download Image
   const handleDownload = async () => {
