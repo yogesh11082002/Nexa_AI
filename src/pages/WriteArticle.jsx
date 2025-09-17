@@ -339,7 +339,15 @@ Write a detailed ${length} article about "${topic}" in around ${words}.
         <div className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200 min-h-[500px] max-h-[700px] overflow-y-auto">
           <h1 className="text-2xl font-bold mb-4">Article Preview</h1>
           {article ? (
-            <div className="prose prose-lg text-black leading-relaxed">
+            <div
+              className="prose prose-lg max-w-full text-gray-900 leading-relaxed
+                    prose-h1:text-3xl prose-h1:font-bold prose-h1:text-black
+                    prose-h2:text-2xl prose-h2:font-semibold prose-h2:text-gray-800
+                    prose-h3:text-xl prose-h3:font-semibold prose-h3:text-gray-700
+                    prose-p:mb-4 prose-p:text-gray-800
+                    prose-li:mb-2
+                    prose-strong:text-black prose-em:text-gray-600 italic"
+            >
               {parse(article)}
             </div>
           ) : !error ? (
