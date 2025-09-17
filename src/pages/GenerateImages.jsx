@@ -238,6 +238,8 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import { getToken } from "@clerk/clerk-react";
+
 
 const styles = [
   "Realistic",
