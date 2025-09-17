@@ -701,7 +701,8 @@
 
 // export default WriteArticle;
 
-import React, { useState } from "react";
+
+imimport React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 
@@ -718,7 +719,6 @@ const WriteArticle = () => {
     e.preventDefault();
     if (!topic) return alert("Please enter a topic!");
 
-    // Determine word count
     const words =
       length === "Short"
         ? "500-800 words"
@@ -731,35 +731,20 @@ const WriteArticle = () => {
       setArticle("");
       setError("");
 
-      // Get Clerk auth token
       const token = await getToken();
       console.log("🔑 Token:", token ? "Token present ✅" : "❌ No token");
 
       const API_URL = import.meta.env.VITE_API_URL;
 
-      // Strong HTML prompt for AI
-      const prompt = `
-Write a detailed blog article on the topic: "${topic}" (${words}).
-- Include an introduction paragraph.
-- Use <h1> for the main title, <h2> for sections, <h3> for subsections.
-- Wrap paragraphs in <p> tags.
-- Use <ul><li> for lists (steps, tips, examples).
-- Include tips/examples in <strong> or <em> where appropriate.
-- End with a conclusion paragraph.
-- Output clean HTML only (no <html>, <body>, <head> tags).
-- Do NOT include Markdown or plain text formatting.
-- The HTML should be ready to render in React with dangerouslySetInnerHTML.
-      `;
-
-      // Send prompt to backend
+      // Send topic, length, and words (backend expects this)
       const res = await axios.post(
         `${API_URL}/api/ai/generate-article`,
-        { prompt },
+        { topic, length, words },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data?.success && res.data.article) {
-        // Clean extra line breaks
+        // Optional: clean HTML and add line breaks
         const cleaned = res.data.article.replace(/\n{2,}/g, "\n").trim();
         setArticle(cleaned);
       } else {
