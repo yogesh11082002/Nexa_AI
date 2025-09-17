@@ -477,7 +477,7 @@ const BlogTitles = () => {
       const API_URL = import.meta.env.VITE_API_URL;
 
       const res = await axios.post(
-        `${API_URL}/api/ai/generate-blogtitle`,
+        `${API_URL}/api/ai/generate-blog-title`,
         { topic: keyword, category },
         { headers: { Authorization: `Bearer ${token}` } }
       );
