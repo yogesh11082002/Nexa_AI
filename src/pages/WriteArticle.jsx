@@ -701,10 +701,11 @@
 
 // export default WriteArticle;
 
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 const WriteArticle = () => {
   const [topic, setTopic] = useState("");
@@ -736,7 +737,6 @@ const WriteArticle = () => {
 
       const API_URL = import.meta.env.VITE_API_URL;
 
-      // Send topic, length, and words (backend expects this)
       const res = await axios.post(
         `${API_URL}/api/ai/generate-article`,
         { topic, length, words },
@@ -744,7 +744,7 @@ const WriteArticle = () => {
       );
 
       if (res.data?.success && res.data.article) {
-        // Optional: clean HTML and add line breaks
+        // Clean line breaks
         const cleaned = res.data.article.replace(/\n{2,}/g, "\n").trim();
         setArticle(cleaned);
       } else {
@@ -821,10 +821,12 @@ const WriteArticle = () => {
         <div className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200 min-h-96 max-h-[600px] overflow-y-auto">
           <h1 className="text-xl font-semibold mb-3">Article Preview</h1>
           {article ? (
-            <div
+            <ReactMarkdown
+              rehypePlugins={[rehypeRaw]}
               className="prose max-w-full text-gray-700"
-              dangerouslySetInnerHTML={{ __html: article }}
-            />
+            >
+              {article}
+            </ReactMarkdown>
           ) : !error ? (
             <p className="text-gray-400 text-sm">
               Enter a topic and click “Generate article” to get started
