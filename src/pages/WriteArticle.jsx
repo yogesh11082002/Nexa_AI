@@ -201,11 +201,10 @@
 
 // export default WriteArticle;
 
+
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
 
 const WriteArticle = () => {
   const [topic, setTopic] = useState("");
@@ -238,6 +237,7 @@ const WriteArticle = () => {
       // Detailed prompt with HTML formatting
       const prompt = `
 Write a detailed ${length} article about "${topic}" in around ${words}.
+- A big heading (<h1>) with the article title.
 - Include an introduction paragraph.
 - Use bold headings and subheadings (<h1>, <h2>, <h3>) for sections.
 - Include lists (<ul><li>) for steps, tips, and examples.
@@ -337,19 +337,9 @@ Write a detailed ${length} article about "${topic}" in around ${words}.
         <div className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200 min-h-[500px] max-h-[700px] overflow-y-auto">
           <h1 className="text-2xl font-bold mb-4">Article Preview</h1>
           {article ? (
-            <ReactMarkdown
-              rehypePlugins={[rehypeRaw]}
-              className="prose prose-lg text-black
-                         prose-h1:text-3xl prose-h1:font-bold
-                         prose-h2:text-2xl prose-h2:font-semibold
-                         prose-h3:text-xl prose-h3:font-medium
-                         prose-p:mb-4 leading-relaxed
-                         prose-ul:ml-5 prose-li:mb-2
-                         prose-strong:text-black
-                         prose-em:text-gray-700"
-            >
+           
               {article}
-            </ReactMarkdown>
+
           ) : !error ? (
             <p className="text-gray-400 text-sm">
               Enter a topic and click “Generate article” to get started
