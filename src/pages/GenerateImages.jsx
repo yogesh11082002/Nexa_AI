@@ -239,6 +239,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";  // ✅ useAuth instead of direct getToken
+  import toast from "react-hot-toast";
 
 const styles = [
   "Realistic",
@@ -259,43 +260,96 @@ const GenerateImages = () => {
   const [loading, setLoading] = useState(false);
 
   // Generate Image (API call to backend)
-  const handleGenerateImage = async (e) => {
-    e.preventDefault();
-    if (!description) {
-      alert("Please enter a description!");
-      return;
-    }
+  // const handleGenerateImage = async (e) => {
+  //   e.preventDefault();
+  //   if (!description) {
+  //     alert("Please enter a description!");
+  //     return;
+  //   }
 
-    setLoading(true);
-    setGeneratedImage(null);
+  //   setLoading(true);
+  //   setGeneratedImage(null);
 
-    try {
-      const token = await getToken();
-      const API_URL = import.meta.env.VITE_API_URL;
+  //   try {
+  //     const token = await getToken();
+  //     const API_URL = import.meta.env.VITE_API_URL;
 
-      const res = await axios.post(
-        `${API_URL}/api/ai/generate-image`,
-        {
-          topic: `${description} in ${selectedStyle}`,
-          publish: isPublic,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+  //     const res = await axios.post(
+  //       `${API_URL}/api/ai/generate-image`,
+  //       {
+  //         topic: `${description} in ${selectedStyle}`,
+  //         publish: isPublic,
+  //       },
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       }
+  //     );
 
-      if (res.data.success) {
-        setGeneratedImage(res.data.image);
-      } else {
-        alert(res.data.error || "Failed to generate image");
+  //     if (res.data.success) {
+  //       setGeneratedImage(res.data.image);
+  //     } else {
+  //       alert(res.data.error || "Failed to generate image");
+  //     }
+  //   } catch (err) {
+  //     console.error("Image generation failed:", err.response?.data || err.message);
+  //     alert("Something went wrong. Check console for details.");
+  //   }
+
+  //   setLoading(false);
+  // };
+
+
+const handleGenerateImage = async (e) => {
+  e.preventDefault();
+  if (!description) {
+    toast.error("Please enter a description!");
+    return;
+  }
+
+  setLoading(true);
+  setGeneratedImage(null);
+
+  try {
+    const token = await getToken();
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    const res = await axios.post(
+      `${API_URL}/api/ai/generate-image`,
+      {
+        topic: `${description} in ${selectedStyle}`,
+        publish: isPublic,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (res.data.success) {
+      setGeneratedImage(res.data.image);
+
+      if (res.data.remaining === 0) {
+        toast.error(
+          "⚠️ You’ve reached your 3-image limit as a Premium user. Limit ended."
+        );
+      } else if (res.data.remaining !== undefined) {
+        toast.success(
+          `Image generated! You can create ${res.data.remaining} more.`
+        );
       }
-    } catch (err) {
-      console.error("Image generation failed:", err.response?.data || err.message);
-      alert("Something went wrong. Check console for details.");
+    } else {
+      toast.error(res.data.error || "Failed to generate image");
     }
+  } catch (err) {
+    console.error("Image generation failed:", err.response?.data || err);
 
+    if (err.response?.status === 403) {
+      toast.error(err.response.data?.error || "You’ve reached your image limit.");
+    } else {
+      toast.error("Something went wrong. Check console for details.");
+    }
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
 
   // Download Image
   const handleDownload = async () => {
