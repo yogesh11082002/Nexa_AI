@@ -258,36 +258,7 @@ const GenerateImages = () => {
   const [generatedImage, setGeneratedImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Generate Image (API call to backend)
-  // const handleGenerateImage = async (e) => {
-  //   e.preventDefault();
-  //   if (!description) {
-  //     alert("Please enter a description!");
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoading(true);
-  //     setGeneratedImage(null);
-
-  //     const { data } = await axios.post("/api/ai/generate-image", {
-  //       topic: `${description} in ${selectedStyle}`, // 👈 backend uses `topic`
-  //       publish: isPublic,
-  //     });
-
-  //     if (data.success) {
-  //       setGeneratedImage(data.image); // backend returns `image`
-  //     } else {
-  //       alert(data.error || "Failed to generate image");
-  //     }
-  //   } catch (err) {
-  //     console.error("Image generation failed:", err);
-  //     alert("Something went wrong while generating the image.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+ 
   // Generate Image (API call to backend)
 const handleGenerateImage = async (e) => {
   e.preventDefault();
