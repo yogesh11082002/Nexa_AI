@@ -702,7 +702,7 @@
 // export default WriteArticle;
 
 
-imimport React, { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 
