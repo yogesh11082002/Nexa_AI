@@ -418,6 +418,157 @@
 
 // export default WriteArticle;
 
+// import React, { useState } from "react";
+// import axios from "axios";
+// import { useAuth } from "@clerk/clerk-react";
+
+// const WriteArticle = () => {
+//   const [topic, setTopic] = useState("");
+//   const [length, setLength] = useState("Short");
+//   const [article, setArticle] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+
+//   const { getToken } = useAuth();
+
+//   // const handleGenerateArticle = async (e) => {
+//   //   e.preventDefault();
+//   //   if (!topic) return alert("Please enter a topic!");
+
+//   //   let words = length === "Short" ? "500-800 words" : length === "Medium" ? "800-1200 words" : "1200+ words";
+
+//   //   try {
+//   //     setLoading(true);
+//   //     setArticle("");
+//   //     setError("");
+
+//   //     const token = await getToken();
+
+//   //     const res = await axios.post(
+//   //       "http://localhost:3000/api/ai/generate-article",
+//   //       { topic, length, words },
+//   //       { headers: { Authorization: `Bearer ${token}` } }
+//   //     );
+
+//   //     if (res.data?.success && res.data.article) {
+//   //       setArticle(res.data.article);
+//   //     } else {
+//   //       console.error("⚠️ Backend response:", res.data);
+//   //       setError(res.data.error || "⚠️ No article received from API.");
+//   //     }
+//   //   } catch (err) {
+//   //     console.error("Article generation error:", err);
+//   //     setError(err.response?.data?.error || err.message || "❌ Failed to generate article.");
+//   //   } finally {
+//   //     setLoading(false);
+//   //   }
+//   // };
+
+//   const handleGenerateArticle = async (e) => {
+//   e.preventDefault();
+//   if (!topic) return alert("Please enter a topic!");
+
+//   let words =
+//     length === "Short"
+//       ? "500-800 words"
+//       : length === "Medium"
+//       ? "800-1200 words"
+//       : "1200+ words";
+
+//   try {
+//     setLoading(true);
+//     setArticle("");
+//     setError("");
+
+//     const token = await getToken();
+//     console.log("🔑 Token:", token ? "Token present ✅" : "❌ No token");
+//     const API_URL = import.meta.env.VITE_API_URL; 
+
+
+//     const res = await axios.post(`${API_URL}/api/ai/generate-article`,
+//       { topic, length, words },
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+
+//     if (res.data?.success && res.data.article) {
+//       setArticle(res.data.article);
+//     } else {
+//       console.error("⚠️ Backend response:", res.data);
+//       setError(res.data.error || "⚠️ No article received from API.");
+//     }
+//   } catch (err) {
+//     console.error("Article generation error:", err);
+//     setError(
+//       err.response?.data?.error ||
+//         err.message ||
+//         "❌ Failed to generate article."
+//     );
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+//   return (
+//     <div className="flex-1 bg-[#F4F7FB] min-h-screen">
+//       <div className="p-6 flex flex-col md:flex-row items-start gap-4 text-slate-700">
+//         {/* Form */}
+//         <form onSubmit={handleGenerateArticle} className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200">
+//           <h1 className="text-xl font-semibold">AI Article Writer</h1>
+
+//           {/* Topic Input */}
+//           <p className="mt-6 text-sm font-medium">Article Topic</p>
+//           <input
+//             className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
+//             placeholder="The future of AI..."
+//             value={topic}
+//             onChange={(e) => setTopic(e.target.value)}
+//           />
+
+//           {/* Length Selector */}
+//           <p className="mt-4 text-sm font-medium">Article Length</p>
+//           <div className="mt-3 flex gap-3 flex-wrap">
+//             {["Short", "Medium", "Long"].map((opt) => (
+//               <span
+//                 key={opt}
+//                 onClick={() => setLength(opt)}
+//                 className={`text-xs px-4 py-1 border rounded-full cursor-pointer ${
+//                   length === opt ? "bg-blue-50 text-blue-700 border-blue-400" : "text-gray-500 border-gray-300"
+//                 }`}
+//               >
+//                 {opt === "Short" ? "Short (500-800 words)" : opt === "Medium" ? "Medium (800-1200 words)" : "Long (1200+ words)"}
+//               </span>
+//             ))}
+//           </div>
+
+//           {/* Generate Button */}
+//           <button
+//             type="submit"
+//             disabled={loading}
+//             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#226BFF] to-[#65ADFF] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer disabled:opacity-60"
+//           >
+//             {loading ? "⏳ Generating..." : "Generate article"}
+//           </button>
+
+//           {/* Error */}
+//           {error && <p className="mt-3 text-sm text-red-500 font-medium">{error}</p>}
+//         </form>
+
+//         {/* Preview */}
+//         <div className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200 min-h-96 max-h-[600px] overflow-y-auto">
+//           <h1 className="text-xl font-semibold mb-3">Article Preview</h1>
+//           {article ? (
+//             <pre className="text-sm text-gray-700 whitespace-pre-wrap">{article}</pre>
+//           ) : !error ? (
+//             <p className="text-gray-400 text-sm">Enter a topic and click “Generate article” to get started</p>
+//           ) : null}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default WriteArticle;
+
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
@@ -431,88 +582,57 @@ const WriteArticle = () => {
 
   const { getToken } = useAuth();
 
-  // const handleGenerateArticle = async (e) => {
-  //   e.preventDefault();
-  //   if (!topic) return alert("Please enter a topic!");
-
-  //   let words = length === "Short" ? "500-800 words" : length === "Medium" ? "800-1200 words" : "1200+ words";
-
-  //   try {
-  //     setLoading(true);
-  //     setArticle("");
-  //     setError("");
-
-  //     const token = await getToken();
-
-  //     const res = await axios.post(
-  //       "http://localhost:3000/api/ai/generate-article",
-  //       { topic, length, words },
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     );
-
-  //     if (res.data?.success && res.data.article) {
-  //       setArticle(res.data.article);
-  //     } else {
-  //       console.error("⚠️ Backend response:", res.data);
-  //       setError(res.data.error || "⚠️ No article received from API.");
-  //     }
-  //   } catch (err) {
-  //     console.error("Article generation error:", err);
-  //     setError(err.response?.data?.error || err.message || "❌ Failed to generate article.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleGenerateArticle = async (e) => {
-  e.preventDefault();
-  if (!topic) return alert("Please enter a topic!");
+    e.preventDefault();
+    if (!topic) return alert("Please enter a topic!");
 
-  let words =
-    length === "Short"
-      ? "500-800 words"
-      : length === "Medium"
-      ? "800-1200 words"
-      : "1200+ words";
+    const words =
+      length === "Short"
+        ? "500-800 words"
+        : length === "Medium"
+        ? "800-1200 words"
+        : "1200+ words";
 
-  try {
-    setLoading(true);
-    setArticle("");
-    setError("");
+    try {
+      setLoading(true);
+      setArticle("");
+      setError("");
 
-    const token = await getToken();
-    console.log("🔑 Token:", token ? "Token present ✅" : "❌ No token");
-    const API_URL = import.meta.env.VITE_API_URL; 
+      const token = await getToken();
+      console.log("🔑 Token:", token ? "Token present ✅" : "❌ No token");
 
+      const API_URL = import.meta.env.VITE_API_URL;
 
-    const res = await axios.post(`${API_URL}/api/ai/generate-article`,
-      { topic, length, words },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      const res = await axios.post(
+        `${API_URL}/api/ai/generate-article`,
+        { topic, length, words },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    if (res.data?.success && res.data.article) {
-      setArticle(res.data.article);
-    } else {
-      console.error("⚠️ Backend response:", res.data);
-      setError(res.data.error || "⚠️ No article received from API.");
+      if (res.data?.success && res.data.article) {
+        setArticle(res.data.article);
+      } else {
+        console.error("⚠️ Backend response:", res.data);
+        setError(res.data.error || "⚠️ No article received from API.");
+      }
+    } catch (err) {
+      console.error("Article generation error:", err);
+      setError(
+        err.response?.data?.error || err.message || "❌ Failed to generate article."
+      );
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Article generation error:", err);
-    setError(
-      err.response?.data?.error ||
-        err.message ||
-        "❌ Failed to generate article."
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="flex-1 bg-[#F4F7FB] min-h-screen">
       <div className="p-6 flex flex-col md:flex-row items-start gap-4 text-slate-700">
         {/* Form */}
-        <form onSubmit={handleGenerateArticle} className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200">
+        <form
+          onSubmit={handleGenerateArticle}
+          className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200"
+        >
           <h1 className="text-xl font-semibold">AI Article Writer</h1>
 
           {/* Topic Input */}
@@ -532,10 +652,16 @@ const WriteArticle = () => {
                 key={opt}
                 onClick={() => setLength(opt)}
                 className={`text-xs px-4 py-1 border rounded-full cursor-pointer ${
-                  length === opt ? "bg-blue-50 text-blue-700 border-blue-400" : "text-gray-500 border-gray-300"
+                  length === opt
+                    ? "bg-blue-50 text-blue-700 border-blue-400"
+                    : "text-gray-500 border-gray-300"
                 }`}
               >
-                {opt === "Short" ? "Short (500-800 words)" : opt === "Medium" ? "Medium (800-1200 words)" : "Long (1200+ words)"}
+                {opt === "Short"
+                  ? "Short (500-800 words)"
+                  : opt === "Medium"
+                  ? "Medium (800-1200 words)"
+                  : "Long (1200+ words)"}
               </span>
             ))}
           </div>
@@ -557,9 +683,14 @@ const WriteArticle = () => {
         <div className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200 min-h-96 max-h-[600px] overflow-y-auto">
           <h1 className="text-xl font-semibold mb-3">Article Preview</h1>
           {article ? (
-            <pre className="text-sm text-gray-700 whitespace-pre-wrap">{article}</pre>
+            <div
+              className="prose max-w-full text-gray-700"
+              dangerouslySetInnerHTML={{ __html: article }}
+            />
           ) : !error ? (
-            <p className="text-gray-400 text-sm">Enter a topic and click “Generate article” to get started</p>
+            <p className="text-gray-400 text-sm">
+              Enter a topic and click “Generate article” to get started
+            </p>
           ) : null}
         </div>
       </div>
