@@ -855,52 +855,118 @@ const WriteArticle = () => {
 
   const { getToken } = useAuth();
 
-  const handleGenerateArticle = async (e) => {
-    e.preventDefault();
-    if (!topic) return alert("Please enter a topic!");
+//   const handleGenerateArticle = async (e) => {
+//     e.preventDefault();
+//     if (!topic) return alert("Please enter a topic!");
 
-    const words =
-      length === "Short"
-        ? "500-800 words"
-        : length === "Medium"
-        ? "800-1200 words"
-        : "1200+ words";
+//     const words =
+//       length === "Short"
+//         ? "500-800 words"
+//         : length === "Medium"
+//         ? "800-1200 words"
+//         : "1200+ words";
 
-    try {
-      setLoading(true);
-      setArticle("");
-      setError("");
+//     try {
+//       setLoading(true);
+//       setArticle("");
+//       setError("");
 
-      const token = await getToken();
+//       const token = await getToken();
 
-      const API_URL = import.meta.env.VITE_API_URL;
+//       const API_URL = import.meta.env.VITE_API_URL;
 
-      const prompt = `Write a detailed ${length} article about "${topic}" in around ${words}. 
-Use proper HTML tags for headings (<h1>, <h2>), subheadings, paragraphs (<p>), bold (<strong>) and italic (<em>) text. 
-Make it visually well-structured, readable, and engaging.`;
+//       const prompt = `Write a detailed ${length} article about "${topic}" in around ${words}. 
+// Use proper HTML tags for headings (<h1>, <h2>), subheadings, paragraphs (<p>), bold (<strong>) and italic (<em>) text. 
+// Make it visually well-structured, readable, and engaging.`;
 
-      const res = await axios.post(
-        `${API_URL}/api/ai/generate-article`,
-        { topic, length, words, prompt },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+//       const res = await axios.post(
+//         `${API_URL}/api/ai/generate-article`,
+//         { topic, length, words, prompt },
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
 
-      if (res.data?.success && res.data.article) {
-        const cleaned = res.data.article.replace(/\n{2,}/g, "\n").trim();
-        setArticle(cleaned);
-      } else {
-        console.error("⚠️ Backend response:", res.data);
-        setError(res.data.error || "⚠️ No article received from API.");
-      }
-    } catch (err) {
-      console.error("Article generation error:", err);
-      setError(
-        err.response?.data?.error || err.message || "❌ Failed to generate article."
-      );
-    } finally {
-      setLoading(false);
+//       if (res.data?.success && res.data.article) {
+//         const cleaned = res.data.article.replace(/\n{2,}/g, "\n").trim();
+//         setArticle(cleaned);
+//       } else {
+//         console.error("⚠️ Backend response:", res.data);
+//         setError(res.data.error || "⚠️ No article received from API.");
+//       }
+//     } catch (err) {
+//       console.error("Article generation error:", err);
+//       setError(
+//         err.response?.data?.error || err.message || "❌ Failed to generate article."
+//       );
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+const handleGenerateArticle = async (e) => {
+  e.preventDefault();
+  if (!topic) return alert("Please enter a topic!");
+
+  const words =
+    length === "Short"
+      ? "500-800 words"
+      : length === "Medium"
+      ? "800-1200 words"
+      : "1200+ words";
+
+  try {
+    setLoading(true);
+    setArticle("");
+    setError("");
+
+    const token = await getToken();
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    // ✅ Detailed prompt with structured HTML instructions
+    const prompt = `
+Write a detailed ${length} article about "${topic}" in around ${words}.
+- Include an introduction paragraph.
+- Use bold headings and subheadings (<h1>, <h2>, <h3>) for sections.
+- Include lists (<ul><li>) for steps, tips, and examples.
+- Include tips or examples in italic or bold where appropriate.
+- Use clear, simple language.
+- End with a conclusion.
+- Do NOT include outer <html>, <body>, or metadata tags.
+- Output clean HTML suitable for ReactMarkdown or ReactQuill with correct heading, list, and paragraph formatting.
+`;
+
+    const res = await axios.post(
+      `${API_URL}/api/ai/generate-article`,
+      { topic, length, words, prompt },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (res.data?.success && res.data.article) {
+      // ✅ Clean unwanted outer HTML tags and extra line breaks
+      const cleaned = res.data.article
+        .replace(/<\s*html[^>]*>/gi, "")
+        .replace(/<\s*\/\s*html>/gi, "")
+        .replace(/<\s*head[^>]*>.*?<\s*\/\s*head>/gis, "")
+        .replace(/<\s*body[^>]*>/gi, "")
+        .replace(/<\s*\/\s*body>/gi, "")
+        .replace(/<\s*meta[^>]*>/gi, "")
+        .replace(/<\s*title[^>]*>.*?<\s*\/\s*title>/gis, "")
+        .replace(/\n\s*\n/g, "\n")
+        .trim();
+
+      setArticle(cleaned);
+    } else {
+      console.error("⚠️ Backend response:", res.data);
+      setError(res.data.error || "⚠️ No article received from API.");
     }
-  };
+  } catch (err) {
+    console.error("Article generation error:", err);
+    setError(
+      err.response?.data?.error || err.message || "❌ Failed to generate article."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex-1 bg-[#F4F7FB] min-h-screen">
