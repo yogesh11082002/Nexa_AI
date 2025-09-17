@@ -307,6 +307,143 @@
 
 // export default BlogTitles;
 
+// import React, { useState } from "react";
+// import axios from "axios";
+// import { useAuth } from "@clerk/clerk-react";
+
+// const BlogTitles = () => {
+//   const [keyword, setKeyword] = useState("");
+//   const [category, setCategory] = useState("General");
+//   const [titles, setTitles] = useState([]);
+//   const [loading, setLoading] = useState(false);
+
+//   const { getToken } = useAuth();
+
+//   const categories = [
+//     "General",
+//     "Technology",
+//     "Business",
+//     "Health",
+//     "Lifestyle",
+//     "Education",
+//     "Travel",
+//     "Food",
+//   ];
+
+//   // Call backend API to generate blog titles
+//   const handleGenerateTitle = async (e) => {
+//     e.preventDefault();
+//     if (!keyword) {
+//       alert("Please enter a keyword!");
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       // Get Clerk token for authenticated request
+//       const token = await getToken();
+
+//       const API_URL = import.meta.env.VITE_API_URL; // your backend URL
+
+//       const res = await axios.post(
+//         `${API_URL}/api/ai/generate-blog-title`,
+//         { topic: keyword, category }, // send category if your backend uses it
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+
+//       if (res.data.success) {
+//         // The API returns titles in a string, split by line if needed
+//         const generatedTitles = res.data.titles
+//           .split("\n")
+//           .map((t) => t.trim())
+//           .filter(Boolean);
+//         setTitles(generatedTitles);
+//       } else {
+//         alert(res.data.error || "Failed to generate titles");
+//       }
+//     } catch (err) {
+//       console.error("Article generation error:", err);
+//       alert("Something went wrong. Check console for details.");
+//     }
+
+//     setLoading(false);
+//   };
+
+//   return (
+//     <div className="flex-1 bg-[#F4F7FB] min-h-screen">
+//       <div className="p-6 flex flex-col md:flex-row items-start gap-4 text-slate-700">
+//         {/* Left Form */}
+//         <form
+//           onSubmit={handleGenerateTitle}
+//           className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200"
+//         >
+//           <div className="flex items-center gap-3">
+//             <h1 className="text-xl font-semibold">AI Title Generator</h1>
+//           </div>
+
+//           <p className="mt-6 text-sm font-medium">Keyword</p>
+//           <input
+//             className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
+//             placeholder="Enter a keyword..."
+//             type="text"
+//             value={keyword}
+//             onChange={(e) => setKeyword(e.target.value)}
+//           />
+
+//           <p className="mt-4 text-sm font-medium">Category</p>
+//           <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3 flex-wrap">
+//             {categories.map((cat) => (
+//               <span
+//                 key={cat}
+//                 onClick={() => setCategory(cat)}
+//                 className={`text-xs text-center px-4 py-1 border rounded-full cursor-pointer ${
+//                   category === cat
+//                     ? "bg-purple-50 text-purple-700 border-purple-400"
+//                     : "text-gray-500 border-gray-300"
+//                 }`}
+//               >
+//                 {cat}
+//               </span>
+//             ))}
+//           </div>
+
+//           <button
+//             type="submit"
+//             disabled={loading}
+//             className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#C341F6] to-[#8E37EB] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+//           >
+//             {loading ? "Generating..." : "Generate title"}
+//           </button>
+//         </form>
+
+//         {/* Right Preview */}
+//         <div className="w-full md:w-1/2 p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-[600px] overflow-y-auto">
+//           <div className="flex items-center gap-3">
+//             <h1 className="text-xl font-semibold">Generated titles</h1>
+//           </div>
+
+//           <div className="flex-1 flex justify-center items-center">
+//             {titles.length > 0 ? (
+//               <ul className="text-sm text-gray-700 list-disc pl-5 space-y-2">
+//                 {titles.map((t, i) => (
+//                   <li key={i}>{t}</li>
+//                 ))}
+//               </ul>
+//             ) : (
+//               <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+//                 <p>Enter a keyword and click “Generate title” to get started</p>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default BlogTitles;
+
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
@@ -330,41 +467,30 @@ const BlogTitles = () => {
     "Food",
   ];
 
-  // Call backend API to generate blog titles
   const handleGenerateTitle = async (e) => {
     e.preventDefault();
-    if (!keyword) {
-      alert("Please enter a keyword!");
-      return;
-    }
-
+    if (!keyword) return alert("Please enter a keyword!");
     setLoading(true);
 
     try {
-      // Get Clerk token for authenticated request
       const token = await getToken();
-
-      const API_URL = import.meta.env.VITE_API_URL; // your backend URL
+      const API_URL = import.meta.env.VITE_API_URL;
 
       const res = await axios.post(
-        `${API_URL}/api/ai/generate-blog-title`,
-        { topic: keyword, category }, // send category if your backend uses it
+        `${API_URL}/api/ai/generate-blogtitle`,
+        { topic: keyword, category },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data.success) {
-        // The API returns titles in a string, split by line if needed
-        const generatedTitles = res.data.titles
-          .split("\n")
-          .map((t) => t.trim())
-          .filter(Boolean);
-        setTitles(generatedTitles);
+        // res.data.titles is now HTML strings
+        setTitles(res.data.titles);
       } else {
         alert(res.data.error || "Failed to generate titles");
       }
     } catch (err) {
-      console.error("Article generation error:", err);
-      alert("Something went wrong. Check console for details.");
+      console.error("Generation error:", err);
+      alert("Something went wrong. Check console.");
     }
 
     setLoading(false);
@@ -373,31 +499,29 @@ const BlogTitles = () => {
   return (
     <div className="flex-1 bg-[#F4F7FB] min-h-screen">
       <div className="p-6 flex flex-col md:flex-row items-start gap-4 text-slate-700">
-        {/* Left Form */}
+        {/* Form */}
         <form
           onSubmit={handleGenerateTitle}
           className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200"
         >
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold">AI Title Generator</h1>
-          </div>
+          <h1 className="text-xl font-semibold">AI Title Generator</h1>
 
           <p className="mt-6 text-sm font-medium">Keyword</p>
           <input
-            className="w-full p-2 px-3 mt-2 outline-none text-sm rounded-md border border-gray-300"
-            placeholder="Enter a keyword..."
             type="text"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
+            className="w-full p-2 mt-2 border rounded-md outline-none"
+            placeholder="Enter a keyword..."
           />
 
           <p className="mt-4 text-sm font-medium">Category</p>
-          <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3 flex-wrap">
+          <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
             {categories.map((cat) => (
               <span
                 key={cat}
                 onClick={() => setCategory(cat)}
-                className={`text-xs text-center px-4 py-1 border rounded-full cursor-pointer ${
+                className={`px-4 py-1 border rounded-full cursor-pointer text-xs ${
                   category === cat
                     ? "bg-purple-50 text-purple-700 border-purple-400"
                     : "text-gray-500 border-gray-300"
@@ -411,31 +535,28 @@ const BlogTitles = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#C341F6] to-[#8E37EB] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+            className="w-full mt-6 px-4 py-2 text-white rounded-lg bg-gradient-to-r from-[#C341F6] to-[#8E37EB]"
           >
-            {loading ? "Generating..." : "Generate title"}
+            {loading ? "Generating..." : "Generate Titles"}
           </button>
         </form>
 
-        {/* Right Preview */}
-        <div className="w-full md:w-1/2 p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-[600px] overflow-y-auto">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold">Generated titles</h1>
-          </div>
-
-          <div className="flex-1 flex justify-center items-center">
-            {titles.length > 0 ? (
-              <ul className="text-sm text-gray-700 list-disc pl-5 space-y-2">
-                {titles.map((t, i) => (
-                  <li key={i}>{t}</li>
-                ))}
-              </ul>
-            ) : (
-              <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-                <p>Enter a keyword and click “Generate title” to get started</p>
-              </div>
-            )}
-          </div>
+        {/* Preview */}
+        <div className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200 overflow-y-auto max-h-[600px]">
+          <h1 className="text-xl font-semibold mb-4">Generated Titles</h1>
+          {titles.length > 0 ? (
+            titles.map((html, i) => (
+              <div
+                key={i}
+                className="mb-6 text-gray-700"
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+            ))
+          ) : (
+            <p className="text-gray-400 text-sm">
+              Enter a keyword and click “Generate Titles” to see results
+            </p>
+          )}
         </div>
       </div>
     </div>
