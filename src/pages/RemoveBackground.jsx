@@ -164,13 +164,14 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import { getToken } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 import toast from "react-hot-toast";
 
 const RemoveBackground = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [processedImage, setProcessedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+   const { getToken } = useAuth();
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -188,7 +189,7 @@ const RemoveBackground = () => {
     setProcessedImage(null);
 
     try {
-      const token = await getToken();
+       const token = await getToken();
       const API_URL = import.meta.env.VITE_API_URL;
 
       const formData = new FormData();
