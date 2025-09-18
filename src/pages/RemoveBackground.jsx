@@ -162,144 +162,6 @@
 // export default RemoveBackground;
 
 
-// import React, { useState } from "react";
-// import axios from "axios";
-// import { useAuth } from "@clerk/clerk-react";
-// import toast from "react-hot-toast";
-
-// const RemoveBackground = () => {
-//   const [selectedFile, setSelectedFile] = useState(null);
-//   const [processedImage, setProcessedImage] = useState(null);
-//   const [loading, setLoading] = useState(false);
-//    const { getToken } = useAuth();
-
-//   const handleFileChange = (e) => {
-//     setSelectedFile(e.target.files[0]);
-//     setProcessedImage(null);
-//   };
-
-//   const handleRemoveBackground = async (e) => {
-//     e.preventDefault();
-//     if (!selectedFile) {
-//       toast.error("Please upload an image first!");
-//       return;
-//     }
-
-//     setLoading(true);
-//     setProcessedImage(null);
-
-//     try {
-//        const token = await getToken();
-//       const API_URL = import.meta.env.VITE_API_URL;
-
-//       const formData = new FormData();
-//       formData.append("image", selectedFile);
-
-//       const res = await axios.post(
-//         `${API_URL}/api/ai/remove-background`,
-//         formData,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "multipart/form-data",
-//           },
-//         }
-//       );
-
-//       if (res.data.success) {
-//         setProcessedImage(res.data.image);
-
-//         if (res.data.remaining === 0) {
-//           toast.error(
-//             "⚠️ You’ve reached your 3-image limit as a Premium user. Limit ended."
-//           );
-//         } else if (res.data.remaining !== undefined) {
-//           toast.success(`Background removed! You can remove ${res.data.remaining} more.`);
-//         } else {
-//           toast.success("Background removed successfully!");
-//         }
-//       } else {
-//         toast.error(res.data.error || "Failed to remove background");
-//       }
-//     } catch (err) {
-//       console.error("Background removal failed:", err.response?.data || err);
-//       if (err.response?.status === 403) {
-//         toast.error(err.response.data?.error || "You’ve reached your limit.");
-//       } else {
-//         toast.error("Something went wrong. Check console for details.");
-//       }
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleDownload = () => {
-//     if (!processedImage) return;
-//     const link = document.createElement("a");
-//     link.href = processedImage;
-//     link.download = "background-removed.png";
-//     link.click();
-//   };
-
-//   return (
-//     <div className="flex-1 bg-[#F4F7FB] min-h-screen">
-//       <div className="p-6 flex flex-col md:flex-row items-start gap-4 text-slate-700">
-//         {/* Left: Upload Form */}
-//         <form
-//           onSubmit={handleRemoveBackground}
-//           className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200"
-//         >
-//           <h1 className="text-xl font-semibold text-[#FF4938]">
-//             Background Removal
-//           </h1>
-//           <input
-//             type="file"
-//             accept="image/*"
-//             onChange={handleFileChange}
-//             className="w-full p-2 px-3 mt-4 outline-none text-sm rounded-md border border-gray-300 text-gray-600"
-//             required
-//           />
-//           <button
-//             type="submit"
-//             disabled={loading}
-//             className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#F6AB41] to-[#FF4938] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
-//           >
-//             {loading ? "Processing..." : "Remove Background"}
-//           </button>
-//         </form>
-
-//         {/* Right: Preview */}
-//         <div className="w-full md:w-1/2 p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96">
-//           <h1 className="text-xl font-semibold text-[#FF4938]">Processed Image</h1>
-//           <div className="flex-1 flex flex-col justify-center items-center mt-4">
-//             {processedImage ? (
-//               <>
-//                 <img
-//                   src={processedImage}
-//                   alt="Processed preview"
-//                   className="rounded-lg max-h-72 object-contain shadow"
-//                 />
-//                 <button
-//                   onClick={handleDownload}
-//                   className="mt-4 bg-[#FF4938] text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600"
-//                 >
-//                   Download Image
-//                 </button>
-//               </>
-//             ) : (
-//               <p className="text-gray-400 text-sm text-center">
-//                 Upload an image and click "Remove Background" to start
-//               </p>
-//             )}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default RemoveBackground;
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
@@ -309,18 +171,15 @@ const RemoveBackground = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [processedImage, setProcessedImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { getToken } = useAuth();
+   const { getToken } = useAuth();
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setSelectedFile(file);
+    setSelectedFile(e.target.files[0]);
     setProcessedImage(null);
   };
 
   const handleRemoveBackground = async (e) => {
     e.preventDefault();
-
     if (!selectedFile) {
       toast.error("Please upload an image first!");
       return;
@@ -330,18 +189,22 @@ const RemoveBackground = () => {
     setProcessedImage(null);
 
     try {
-      const token = await getToken();
+       const token = await getToken();
       const API_URL = import.meta.env.VITE_API_URL;
 
       const formData = new FormData();
       formData.append("image", selectedFile);
 
-      const res = await axios.post(`${API_URL}/api/ai/remove-background`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.post(
+        `${API_URL}/api/ai/remove-background`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (res.data.success) {
         setProcessedImage(res.data.image);
@@ -351,9 +214,7 @@ const RemoveBackground = () => {
             "⚠️ You’ve reached your 3-image limit as a Premium user. Limit ended."
           );
         } else if (res.data.remaining !== undefined) {
-          toast.success(
-            `Background removed! You can remove ${res.data.remaining} more images.`
-          );
+          toast.success(`Background removed! You can remove ${res.data.remaining} more.`);
         } else {
           toast.success("Background removed successfully!");
         }
@@ -362,11 +223,8 @@ const RemoveBackground = () => {
       }
     } catch (err) {
       console.error("Background removal failed:", err.response?.data || err);
-
       if (err.response?.status === 403) {
         toast.error(err.response.data?.error || "You’ve reached your limit.");
-      } else if (err.response?.data?.error) {
-        toast.error(err.response.data.error);
       } else {
         toast.error("Something went wrong. Check console for details.");
       }
@@ -380,9 +238,7 @@ const RemoveBackground = () => {
     const link = document.createElement("a");
     link.href = processedImage;
     link.download = "background-removed.png";
-    document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
   };
 
   return (
@@ -406,7 +262,7 @@ const RemoveBackground = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#F6AB41] to-[#FF4938] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer disabled:opacity-50"
+            className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#F6AB41] to-[#FF4938] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
           >
             {loading ? "Processing..." : "Remove Background"}
           </button>
