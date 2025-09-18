@@ -289,8 +289,21 @@ const Community = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        console.log("✅ Published creations:", res.data);
+
         if (res.data.success) {
-          setCreations(res.data.creations);
+          // Normalize backend response
+          const normalized = res.data.creations.map((c) => ({
+            id: c.id || c._id, // ✅ fallback for MongoDB style
+            img: c.img || c.imageUrl, // ✅ fallback key
+            text: c.text || c.description || "",
+            publish: c.publish ?? false,
+            liked: c.liked || false,
+            likeCount: c.likeCount || 0,
+            whoLiked: c.whoLiked || c.likes || [],
+          }));
+
+          setCreations(normalized.filter((c) => c.publish));
         }
       } catch (error) {
         console.error("❌ Error fetching creations:", error);
@@ -318,7 +331,7 @@ const Community = () => {
                   ...item,
                   liked: res.data.creation.liked,
                   likeCount: res.data.creation.likeCount,
-                  whoLiked: res.data.creation.likes || [], // ✅ update list of userIds
+                  whoLiked: res.data.creation.likes || [],
                 }
               : item
           )
