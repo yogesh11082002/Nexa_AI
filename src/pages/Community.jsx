@@ -299,13 +299,14 @@ import { useAuth } from "@clerk/clerk-react";
 const Community = () => {
   const [creations, setCreations] = useState([]);
   const { getToken } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Fetch published creations
   useEffect(() => {
     const fetchCreations = async () => {
       try {
         const token = await getToken();
-        const res = await axios.get("/api/user/creations/published", {
+        const res = await axios.get(`${API_URL}/api/user/creations/published`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -325,8 +326,8 @@ const Community = () => {
   const handleLike = async (id, index) => {
     try {
       const token = await getToken();
-      const res = await axios.post(
-        "/api/user/creations/toggle-like",
+      
+      const res = await axios.get(`${API_URL}/api/user/creations/toggle-like`,
         { id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
