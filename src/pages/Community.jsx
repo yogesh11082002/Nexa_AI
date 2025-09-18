@@ -302,14 +302,6 @@ const Community = () => {
                       </svg>
                     </div>
                   </div>
-
-                  {item.whoLiked?.length > 0 && (
-                    <p className="text-xs mt-2">
-                      Liked by: {item.whoLiked.slice(0, 3).join(", ")}
-                      {item.whoLiked.length > 3 &&
-                        ` +${item.whoLiked.length - 3}`}
-                    </p>
-                  )}
                 </div>
               </div>
             ))}
