@@ -7,7 +7,7 @@
 //   const { getToken } = useAuth();
 //   const API_URL = import.meta.env.VITE_API_URL;
 
-//   // Fetch published creations
+//   // ✅ Fetch published creations
 //   useEffect(() => {
 //     const fetchCreations = async () => {
 //       try {
@@ -19,21 +19,31 @@
 //         console.log("✅ Published creations:", res.data);
 
 //         if (res.data.success) {
-//           setCreations(res.data.creations);
+//           // normalize & add fallback image
+//           const normalized = res.data.creations.map((c) => ({
+//             id: c.id,
+//             img: c.img || c.image_url || c.imageUrl || "/placeholder.png", // 👈 fallback
+//             text: c.text || "",
+//             liked: c.liked || false,
+//             likeCount: c.likeCount || 0,
+//             whoLiked: c.whoLiked || [],
+//           }));
+//           setCreations(normalized);
 //         }
 //       } catch (error) {
 //         console.error("❌ Error fetching creations:", error);
 //       }
 //     };
 //     fetchCreations();
-//   }, [getToken]);
+//   }, [getToken, API_URL]);
 
-//   // Toggle like/unlike
+//   // ✅ Toggle like/unlike
 //   const handleLike = async (id, index) => {
 //     try {
 //       const token = await getToken();
-      
-//       const res = await axios.get(`${API_URL}/api/user/creations/toggle-like`,
+
+//       const res = await axios.post(
+//         `${API_URL}/api/user/creations/toggle-like`,
 //         { id },
 //         { headers: { Authorization: `Bearer ${token}` } }
 //       );
@@ -46,7 +56,7 @@
 //                   ...item,
 //                   liked: res.data.creation.liked,
 //                   likeCount: res.data.creation.likeCount,
-//                   whoLiked: res.data.creation.whoLiked, // ✅ match backend
+//                   whoLiked: res.data.creation.whoLiked,
 //                 }
 //               : item
 //           )
@@ -87,7 +97,8 @@
 //                 <img
 //                   src={item.img}
 //                   alt="Generated creation"
-//                   className="w-full h-full object-cover rounded-lg"
+//                   className="w-full h-64 object-cover rounded-lg"
+//                   onError={(e) => (e.target.src = "/placeholder.png")} // 👈 fallback if broken URL
 //                 />
 //                 <div className="absolute inset-0 flex flex-col justify-between group-hover:bg-gradient-to-b from-transparent to-black/80 text-white rounded-lg transition-all p-3">
 //                   <p className="text-sm hidden group-hover:block">{item.text}</p>
@@ -170,11 +181,11 @@ const Community = () => {
         console.log("✅ Published creations:", res.data);
 
         if (res.data.success) {
-          // normalize & add fallback image
+          // Map backend content to img
           const normalized = res.data.creations.map((c) => ({
             id: c.id,
-            img: c.img || c.image_url || c.imageUrl || "/placeholder.png", // 👈 fallback
-            text: c.text || "",
+            img: c.img || c.content || "/placeholder.png", // 👈 use content column
+            text: c.text || c.prompt || "",
             liked: c.liked || false,
             likeCount: c.likeCount || 0,
             whoLiked: c.whoLiked || [],
@@ -247,9 +258,9 @@ const Community = () => {
               >
                 <img
                   src={item.img}
-                  alt="Generated creation"
+                  alt={item.text || "Generated creation"}
                   className="w-full h-64 object-cover rounded-lg"
-                  onError={(e) => (e.target.src = "/placeholder.png")} // 👈 fallback if broken URL
+                  onError={(e) => (e.target.src = "/placeholder.png")} // fallback
                 />
                 <div className="absolute inset-0 flex flex-col justify-between group-hover:bg-gradient-to-b from-transparent to-black/80 text-white rounded-lg transition-all p-3">
                   <p className="text-sm hidden group-hover:block">{item.text}</p>
