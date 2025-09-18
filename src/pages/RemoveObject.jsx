@@ -192,53 +192,199 @@
 
 // export default RemoveObject;
 
+
+// import React, { useState } from "react";
+// import axios from "axios";
+
+// const RemoveObject = () => {
+//   const [image, setImage] = useState(null);
+//   const [objectName, setObjectName] = useState("");
+//   const [processedImage, setProcessedImage] = useState(null);
+//   const [loading, setLoading] = useState(false);
+
+//   const API_URL = import.meta.env.VITE_API_URL; // your backend URL
+
+//   const handleUpload = (e) => {
+//     setImage(e.target.files[0]);
+//     setProcessedImage(null); // reset previous output
+//   };
+
+//   const handleRemoveObject = async (e) => {
+//     e.preventDefault();
+//     if (!image || !objectName) {
+//       alert("Please upload an image and enter an object name.");
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       const formData = new FormData();
+//       formData.append("image", image);
+//       formData.append("object", objectName); // backend expects "object"
+
+//       const token = localStorage.getItem("token"); // or use your auth method
+
+//       const res = await axios.post(`${API_URL}/api/ai/remove-object`, formData, {
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+
+//       if (res.data.success) {
+//         setProcessedImage(res.data.image);
+//       } else {
+//         alert(res.data.error || "Failed to remove object");
+//       }
+//     } catch (err) {
+//       console.error("Error removing object:", err);
+//       alert("Something went wrong!");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleDownload = () => {
+//     if (!processedImage) return;
+//     const link = document.createElement("a");
+//     link.href = processedImage;
+//     link.download = "processed-image.png";
+//     link.click();
+//   };
+
+//   return (
+//     <div className="h-full overflow-y-scroll p-6 text-slate-700">
+//       <div className="flex flex-col lg:flex-row gap-6">
+//         {/* Upload Form */}
+//         <form
+//           onSubmit={handleRemoveObject}
+//           className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
+//         >
+//           <h1 className="text-xl font-semibold mb-4">Object Removal</h1>
+
+//           <label className="block text-sm font-medium mb-1">Upload image</label>
+//           <input
+//             type="file"
+//             accept="image/*"
+//             onChange={handleUpload}
+//             className="w-full p-2 mb-4 border rounded-md text-gray-600"
+//             required
+//           />
+
+//           <label className="block text-sm font-medium mb-1">Object name to remove</label>
+//           <input
+//             type="text"
+//             placeholder="e.g., watch, spoon"
+//             value={objectName}
+//             onChange={(e) => setObjectName(e.target.value)}
+//             className="w-full p-2 mb-4 border rounded-md"
+//             required
+//           />
+
+//           <button
+//             type="submit"
+//             disabled={loading}
+//             className="w-full bg-gradient-to-r from-[#417DF6] to-[#8E37EB] text-white px-4 py-2 rounded-lg disabled:opacity-50"
+//           >
+//             {loading ? "Processing..." : "Remove Object"}
+//           </button>
+//         </form>
+
+//         {/* Output Preview */}
+//         <div className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col items-center">
+//           <h1 className="text-xl font-semibold mb-4">Processed Image</h1>
+
+//           {processedImage ? (
+//             <>
+//               <img
+//                 src={processedImage}
+//                 alt="Processed result"
+//                 className="max-h-80 object-contain mb-4"
+//               />
+//               <button
+//                 onClick={handleDownload}
+//                 className="bg-[#4A7AFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+//               >
+//                 Download Image
+//               </button>
+//             </>
+//           ) : (
+//             <div className="text-gray-400 text-center">
+//               Upload an image and click "Remove Object" to get started
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default RemoveObject;
+
 import React, { useState } from "react";
 import axios from "axios";
+import { useAuth } from "@clerk/clerk-react";
+import toast from "react-hot-toast";
 
 const RemoveObject = () => {
-  const [image, setImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [objectName, setObjectName] = useState("");
   const [processedImage, setProcessedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { getToken } = useAuth();
 
-  const API_URL = import.meta.env.VITE_API_URL; // your backend URL
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  const handleUpload = (e) => {
-    setImage(e.target.files[0]);
-    setProcessedImage(null); // reset previous output
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+    setProcessedImage(null);
   };
 
   const handleRemoveObject = async (e) => {
     e.preventDefault();
-    if (!image || !objectName) {
-      alert("Please upload an image and enter an object name.");
+    if (!selectedFile || !objectName.trim()) {
+      toast.error("Please upload an image and enter an object name.");
       return;
     }
 
     setLoading(true);
+    setProcessedImage(null);
 
     try {
+      const token = await getToken();
       const formData = new FormData();
-      formData.append("image", image);
-      formData.append("object", objectName); // backend expects "object"
-
-      const token = localStorage.getItem("token"); // or use your auth method
+      formData.append("image", selectedFile);
+      formData.append("object", objectName);
 
       const res = await axios.post(`${API_URL}/api/ai/remove-object`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       });
 
       if (res.data.success) {
         setProcessedImage(res.data.image);
+        if (res.data.remaining === 0) {
+          toast.error(
+            "⚠️ You’ve reached your 3-image limit as a Premium user."
+          );
+        } else if (res.data.remaining !== undefined) {
+          toast.success(`Object removed! ${res.data.remaining} attempts left.`);
+        } else {
+          toast.success("Object removed successfully!");
+        }
       } else {
-        alert(res.data.error || "Failed to remove object");
+        toast.error(res.data.error || "Failed to remove object");
       }
     } catch (err) {
-      console.error("Error removing object:", err);
-      alert("Something went wrong!");
+      console.error("Error removing object:", err.response?.data || err);
+      if (err.response?.status === 403) {
+        toast.error(err.response.data?.error || "You’ve reached your limit.");
+      } else {
+        toast.error("Something went wrong. Check console for details.");
+      }
     } finally {
       setLoading(false);
     }
@@ -253,25 +399,29 @@ const RemoveObject = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll p-6 text-slate-700">
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Upload Form */}
+    <div className="flex-1 bg-[#F4F7FB] min-h-screen">
+      <div className="p-6 flex flex-col md:flex-row items-start gap-6 text-slate-700">
+        {/* Left: Upload Form */}
         <form
           onSubmit={handleRemoveObject}
-          className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
+          className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
         >
-          <h1 className="text-xl font-semibold mb-4">Object Removal</h1>
+          <h1 className="text-xl font-semibold text-[#417DF6] mb-4">
+            Object Removal
+          </h1>
 
           <label className="block text-sm font-medium mb-1">Upload image</label>
           <input
             type="file"
             accept="image/*"
-            onChange={handleUpload}
+            onChange={handleFileChange}
             className="w-full p-2 mb-4 border rounded-md text-gray-600"
             required
           />
 
-          <label className="block text-sm font-medium mb-1">Object name to remove</label>
+          <label className="block text-sm font-medium mb-1">
+            Object name to remove
+          </label>
           <input
             type="text"
             placeholder="e.g., watch, spoon"
@@ -284,34 +434,36 @@ const RemoveObject = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-[#417DF6] to-[#8E37EB] text-white px-4 py-2 rounded-lg disabled:opacity-50"
+            className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#417DF6] to-[#8E37EB] text-white px-4 py-2 rounded-lg disabled:opacity-50"
           >
             {loading ? "Processing..." : "Remove Object"}
           </button>
         </form>
 
-        {/* Output Preview */}
-        <div className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col items-center">
-          <h1 className="text-xl font-semibold mb-4">Processed Image</h1>
+        {/* Right: Preview */}
+        <div className="w-full md:w-1/2 p-4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col items-center">
+          <h1 className="text-xl font-semibold text-[#417DF6] mb-4">
+            Processed Image
+          </h1>
 
           {processedImage ? (
             <>
               <img
                 src={processedImage}
                 alt="Processed result"
-                className="max-h-80 object-contain mb-4"
+                className="max-h-80 object-contain mb-4 rounded-lg shadow"
               />
               <button
                 onClick={handleDownload}
-                className="bg-[#4A7AFF] text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                className="bg-[#417DF6] text-white px-4 py-2 rounded-lg hover:bg-blue-600"
               >
                 Download Image
               </button>
             </>
           ) : (
-            <div className="text-gray-400 text-center">
-              Upload an image and click "Remove Object" to get started
-            </div>
+            <p className="text-gray-400 text-center">
+              Upload an image and click "Remove Object" to start
+            </p>
           )}
         </div>
       </div>
