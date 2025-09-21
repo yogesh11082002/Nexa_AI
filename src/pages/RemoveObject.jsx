@@ -322,6 +322,7 @@
 
 // export default RemoveObject;
 
+
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
@@ -354,7 +355,8 @@ const RemoveObject = () => {
     try {
       const token = await getToken();
       const formData = new FormData();
-      formData.append("image", selectedFile);
+     formData.append("file", selectedFile); // not "image"
+
       formData.append("object", objectName);
 
       const res = await axios.post(`${API_URL}/api/ai/remove-object`, formData, {
