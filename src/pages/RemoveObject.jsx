@@ -355,8 +355,7 @@ const RemoveObject = () => {
     try {
       const token = await getToken();
       const formData = new FormData();
-     formData.append("file", selectedFile); // not "image"
-
+      formData.append("image", selectedFile);
       formData.append("object", objectName);
 
       const res = await axios.post(`${API_URL}/api/ai/remove-object`, formData, {
